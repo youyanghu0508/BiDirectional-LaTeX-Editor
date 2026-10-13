@@ -1,6 +1,32 @@
-# HaTeX - 可视化 LaTeX 公式编辑器
+# BiDirectional LaTeX Editor
 
-HaTeX 是一款基于 PySide6 和 MathLive 的桌面端 LaTeX 公式编辑器，提供可视化的数学公式编辑体验。
+一款基于 PySide6 和 MathLive 的双向 LaTeX 公式编辑器，提供可视化 WYSIWYG 编辑和实时代码同步。
+
+##  截图展示
+
+### 主界面 - 亮色主题
+![主界面亮色主题](screenshots/main-light.png)
+*双向编辑：上方可视化公式区，下方 LaTeX 代码区，实时同步*
+
+### 主界面 - 暗色主题
+![主界面暗色主题](screenshots/main-dark.png)
+*支持亮色/暗色主题切换，保护视力*
+
+### 自动补全功能
+![自动补全](screenshots/autocomplete.png)
+*输入 `\` 后跟命令名，智能提示 40+ 常用 LaTeX 命令*
+
+### 矩阵格式化
+![矩阵格式化](screenshots/matrix-format.png)
+*Ctrl+Shift+F 自动格式化矩阵环境*
+
+### 收藏管理
+![收藏管理](screenshots/favorites.png)
+*收藏常用公式，快速插入使用*
+
+### 历史记录
+![历史记录](screenshots/history.png)
+*自动保存最近 50 条公式历史*
 
 ## 功能特性
 
