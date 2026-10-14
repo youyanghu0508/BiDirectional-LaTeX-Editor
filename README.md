@@ -45,12 +45,14 @@ A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWY
 - **Drag & Drop**: Open .tex files by dragging into the window
 - **Zoom**: Ctrl+scroll to zoom formula display (12px–72px)
 - **Dark Theme**: Light/dark theme toggle
+- **Multilingual**: Chinese/English interface with language switcher
 
 ### Editing
 - **Smart Brackets**: Auto-complete bracket pairs
 - **Shortcuts**: Rich keyboard shortcut support
 - **Arrow Key Navigation**: Full arrow key support in formula area (left/right/up/down)
 - **Chinese UI**: Complete Chinese interface and prompts
+- **English UI**: Full English translation available
 
 ## Installation
 
@@ -62,11 +64,11 @@ A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWY
 ### Run from Source
 ```bash
 pip install PySide6
-python "HaTeX _v1.5.1.py"
+python "HaTeX _v1.5.2.py"
 ```
 
 ### Standalone Executable
-Download `HaTeX-v1.5.1-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.1.exe`. No Python installation required.
+Download `HaTeX-v1.5.2-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.2.exe`. No Python installation required.
 
 ## Usage
 
@@ -109,7 +111,13 @@ Download `HaTeX-v1.5.1-windows-x64.zip` from [Releases](https://github.com/youya
 
 ## Version History
 
-### v1.5.1 (Current)
+### v1.5.2 (Current)
+- **New**: Multilingual support (Chinese/English)
+- **New**: Language switcher in menu (Language → 中文 / English)
+- **New**: Language preference saved to config file
+- **New**: Autocomplete descriptions translated to English
+
+### v1.5.1
 - **Fix**: Textarea scrolling issues (scrollbar drag, mouse wheel to bottom, ArrowDown to last line)
 - **Fix**: Syntax highlight overlay scroll synchronization with textarea
 
@@ -152,13 +160,14 @@ Download `HaTeX-v1.5.1-windows-x64.zip` from [Releases](https://github.com/youya
 
 ```
 HaTeX/
-├── HaTeX _v1.5.1.py    # Main program (all code)
+├── HaTeX _v1.5.2.py    # Main program (all code)
 ├── mathlive/            # MathLive library files
 │   ├── mathlive.min.js
 │   ├── mathlive-static.css
 │   └── ...
 ├── hatex_history.json   # History (auto-generated)
-└── hatex_favorites.json # Favorites (auto-generated)
+├── hatex_favorites.json # Favorites (auto-generated)
+└── hatex_config.json    # Config (language preference, auto-generated)
 ```
 
 ## Developer
@@ -178,4 +187,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Current Version**: v1.5.1 | **Last Updated**: 2026-10-14
+**Current Version**: v1.5.2 | **Last Updated**: 2026-10-14
