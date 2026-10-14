@@ -136,10 +136,6 @@ python "HaTeX _v1.4.0.py"
 ### v1.2.2
 - 初始稳定版本
 
-## 已知问题
-
-- **方向键问题**：在公式区（math-field）中，方向键可能无法正常工作。这是 MathLive 在 Qt WebEngine 环境下的已知限制，建议使用鼠标点击来移动光标。
-
 ## 技术栈
 
 - **后端**：Python 3.8+ / PySide6 (Qt 6)

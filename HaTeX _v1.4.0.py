@@ -171,7 +171,6 @@ HTML_CONTENT = r"""
         <math-field
             id="mf"
             tabindex="0"
-            smart-focus="true"
             smart-mode="true">
         </math-field>
         <div id="autocomplete" class="autocomplete-suggestions"></div>
@@ -525,6 +524,76 @@ HTML_CONTENT = r"""
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') hideAutocomplete();
         });
 
+        // ========== 方向键修复 ==========
+        mf.addEventListener('focus', function() {
+            if (window.pythonBridge) window.pythonBridge.mfFocusChanged(true);
+        });
+        mf.addEventListener('blur', function() {
+            if (window.pythonBridge) window.pythonBridge.mfFocusChanged(false);
+        });
+
+        mf.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
+                e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                if (document.activeElement === mf || mf.contains(document.activeElement)) {
+                    var commands = {
+                        'ArrowLeft': 'moveToPreviousChar',
+                        'ArrowRight': 'moveToNextChar',
+                        'ArrowUp': 'moveUp',
+                        'ArrowDown': 'moveDown'
+                    };
+                    var cmd = commands[e.key];
+                    if (cmd && mf.executeCommand) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        mf.executeCommand(cmd);
+                    }
+                }
+            }
+        }, true);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
+                e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                if (!mf || !mf.executeCommand) return;
+                var path = e.composedPath ? e.composedPath() : [];
+                var inMathField = false;
+                for (var i = 0; i < path.length; i++) {
+                    if (path[i] === mf) { inMathField = true; break; }
+                }
+                if (!inMathField && document.activeElement !== mf) return;
+                var commands = {
+                    'ArrowLeft': 'moveToPreviousChar',
+                    'ArrowRight': 'moveToNextChar',
+                    'ArrowUp': 'moveUp',
+                    'ArrowDown': 'moveDown'
+                };
+                var cmd = commands[e.key];
+                if (cmd) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mf.executeCommand(cmd);
+                }
+            }
+        }, true);
+
+        function handleArrowKey(direction) {
+            if (!mf) return false;
+            var commands = {
+                'left': 'moveToPreviousChar',
+                'right': 'moveToNextChar',
+                'up': 'moveUp',
+                'down': 'moveDown'
+            };
+            var cmd = commands[direction];
+            if (cmd && mf.executeCommand) {
+                mf.executeCommand(cmd);
+                return true;
+            }
+            return false;
+        }
+        window.handleArrowKey = handleArrowKey;
+
         function setMathField(latex) {
             if (mf.getValue() !== latex) {
                 isSyncing = true; mf.setValue(latex); isSyncing = false;
@@ -571,6 +640,7 @@ class Bridge(QObject):
     historySaveRequested = Signal(str)
     favoritesSaveRequested = Signal(str)
     initRequested = Signal()
+    focusStateChanged = Signal(bool)
 
     def __init__(self):
         super().__init__()
@@ -597,6 +667,10 @@ class Bridge(QObject):
     def requestInitData(self):
         self.initRequested.emit()
 
+    @Slot(bool)
+    def mfFocusChanged(self, focused):
+        self.focusStateChanged.emit(focused)
+
 
 class MathEditorApp(QMainWindow):
     def __init__(self):
@@ -617,6 +691,8 @@ class MathEditorApp(QMainWindow):
         self.bridge.initRequested.connect(self.send_init_data)
         self.bridge.historySaveRequested.connect(self._js_save_history)
         self.bridge.favoritesSaveRequested.connect(self._js_save_favorites)
+        self.bridge.focusStateChanged.connect(self._on_mf_focus_changed)
+        self._mf_focused = False
 
         self.web_view = QWebEngineView()
         
@@ -811,6 +887,9 @@ class MathEditorApp(QMainWindow):
 
     def on_latex_changed_from_js(self, latex_code):
         self.current_latex = latex_code
+
+    def _on_mf_focus_changed(self, focused):
+        self._mf_focused = focused
 
     def set_formula_from_python(self, latex_code):
         js_literal = json.dumps(latex_code)
