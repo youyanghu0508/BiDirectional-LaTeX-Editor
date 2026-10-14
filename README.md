@@ -1,182 +1,177 @@
 # BiDirectional LaTeX Editor
 
-一款基于 PySide6 和 MathLive 的双向 LaTeX 公式编辑器，提供可视化 WYSIWYG 编辑和实时代码同步。
+A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWYG visual editing with real-time bidirectional code synchronization.
 
-##  截图展示
+## Screenshots
 
-### 主界面 - 亮色主题
-![主界面亮色主题](screenshots/main-light.png)
-*双向编辑：上方可视化公式区，下方 LaTeX 代码区，实时同步*
+### Main Interface - Light Theme
+![Main Interface - Light Theme](screenshots/main-light.png)
+*Bidirectional editing: visual formula area on top, LaTeX code area on bottom, synced in real time*
 
-### 主界面 - 暗色主题
-![主界面暗色主题](screenshots/main-dark.png)
-*支持亮色/暗色主题切换，保护视力*
+### Main Interface - Dark Theme
+![Main Interface - Dark Theme](screenshots/main-dark.png)
+*Light/dark theme toggle for comfortable editing*
 
-### 自动补全功能
-![自动补全](screenshots/autocomplete.png)
-*输入 `\` 后跟命令名，智能提示 40+ 常用 LaTeX 命令*
+### Complex Formula
+![Complex Formula](screenshots/formula-complex.png)
+*Quadratic formula rendered in real time*
 
-### 矩阵格式化
-![矩阵格式化](screenshots/matrix-format.png)
-*Ctrl+Shift+F 自动格式化矩阵环境*
+### Syntax Highlighting
+![Syntax Highlighting](screenshots/syntax-highlight.png)
+*LaTeX commands, braces, numbers, and comments in distinct colors*
 
-### 收藏管理
-![收藏管理](screenshots/favorites.png)
-*收藏常用公式，快速插入使用*
+### Autocomplete
+![Autocomplete](screenshots/autocomplete.png)
+*Type `\` followed by a command name for smart suggestions (40+ commands)*
 
-### 历史记录
-![历史记录](screenshots/history.png)
-*自动保存最近 50 条公式历史*
+### Matrix Formatting
+![Matrix Formatting](screenshots/matrix-format.png)
+*Ctrl+Shift+F to auto-format matrix environments*
 
-## 功能特性
+## Features
 
-### 核心功能
-- **可视化编辑**：基于 MathLive 的所见即所得公式编辑器
-- **实时同步**：公式区与 LaTeX 代码区双向实时同步
-- **自动补全**：智能 LaTeX 命令自动补全（支持 40+ 常用命令）
-- **矩阵格式化**：自动格式化矩阵环境（pmatrix, bmatrix, vmatrix 等）
+### Core
+- **Visual Editing**: WYSIWYG formula editor powered by MathLive
+- **Bidirectional Sync**: Real-time sync between visual formula and LaTeX code
+- **Autocomplete**: Smart LaTeX command completion (40+ commands)
+- **Matrix Formatting**: Auto-format matrix environments (pmatrix, bmatrix, vmatrix, etc.)
+- **Syntax Highlighting**: Color-coded LaTeX code (commands, braces, numbers, comments)
 
-### 高级功能
-- **复制为图片**：一键复制公式为 PNG 图片（Ctrl+Shift+C）
-- **导出功能**：支持导出 PNG 和 SVG（MathML）格式
-- **历史记录**：自动保存最近 50 条公式历史
-- **收藏管理**：收藏常用公式，快速插入
-- **拖拽支持**：支持拖拽 .tex 文件到窗口打开
-- **缩放控制**：Ctrl+滚轮缩放公式显示（12px-72px）
-- **暗色主题**：支持亮色/暗色主题切换
+### Advanced
+- **Copy as Image**: One-click copy formula as PNG to clipboard (Ctrl+Shift+C)
+- **Export**: Export as PNG or SVG/MathML
+- **History**: Auto-save last 50 formulas for quick recall
+- **Favorites**: Bookmark frequently used formulas for fast insertion
+- **Drag & Drop**: Open .tex files by dragging into the window
+- **Zoom**: Ctrl+scroll to zoom formula display (12px–72px)
+- **Dark Theme**: Light/dark theme toggle
 
-### 编辑功能
-- **智能括号**：自动补全括号配对
-- **快捷键**：丰富的键盘快捷键支持
-- **语法高亮**：LaTeX 代码区语法高亮（命令、括号、数字、注释分色显示）
-- **中文界面**：完整的中文界面和提示
+### Editing
+- **Smart Brackets**: Auto-complete bracket pairs
+- **Shortcuts**: Rich keyboard shortcut support
+- **Arrow Key Navigation**: Full arrow key support in formula area (left/right/up/down)
+- **Chinese UI**: Complete Chinese interface and prompts
 
-## 安装运行
+## Installation
 
-### 环境要求
+### Requirements
 - Python 3.8+
 - PySide6
-- MathLive 0.111.1（已包含）
+- MathLive 0.111.1 (included)
 
-### 安装步骤
-
-1. 安装依赖：
+### Run from Source
 ```bash
 pip install PySide6
-```
-
-2. 下载 MathLive 库到 `mathlive/` 目录（已包含在发布包中）
-
-3. 运行程序：
-```bash
 python "HaTeX _v1.5.0.py"
 ```
 
-## 使用说明
+### Standalone Executable
+Download `HaTeX-v1.5.0-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.0.exe`. No Python installation required.
 
-### 基本操作
+## Usage
 
-1. **输入公式**：在上方公式区直接输入，或使用虚拟键盘
-2. **编辑代码**：在下方代码区直接编辑 LaTeX 代码
-3. **自动补全**：在代码区输入 `\` 后跟命令名，按 Tab 或 Enter 选择
-4. **格式化矩阵**：选中矩阵代码后按 Ctrl+Shift+F 格式化
+### Basic
+1. **Input formula**: Type directly in the visual formula area, or use the virtual keyboard
+2. **Edit code**: Edit LaTeX code directly in the code area below
+3. **Autocomplete**: Type `\` in the code area followed by a command name, press Tab or Enter to select
+4. **Format matrix**: Select matrix code and press Ctrl+Shift+F
 
-### 快捷键
+### Shortcuts
 
-| 快捷键 | 功能 |
-|--------|------|
-| Ctrl+Shift+C | 复制为 PNG 图片 |
-| Ctrl+Shift+E | 导出为 PNG |
-| Ctrl+O | 打开 .tex 文件 |
-| Ctrl+S | 保存为 .tex 文件 |
-| Ctrl+D | 收藏当前公式 |
-| Ctrl+Shift+F | 格式化矩阵 |
-| Ctrl+= | 放大 |
-| Ctrl+- | 缩小 |
-| Ctrl+0 | 重置缩放 |
-| Ctrl+滚轮 | 缩放公式 |
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+Shift+C | Copy as PNG image |
+| Ctrl+Shift+E | Export as PNG |
+| Ctrl+O | Open .tex file |
+| Ctrl+S | Save as .tex file |
+| Ctrl+D | Favorite current formula |
+| Ctrl+Shift+F | Format matrix |
+| Ctrl+= | Zoom in |
+| Ctrl+- | Zoom out |
+| Ctrl+0 | Reset zoom |
+| Ctrl+Scroll | Zoom formula |
 
-### 自动补全命令
+### Autocomplete Commands
 
-支持 40+ 常用 LaTeX 命令的自动补全，包括：
-- 分数：`\frac`
-- 根号：`\sqrt`, `\sqrtn`
-- 积分：`\int`, `\oint`
-- 求和/求积：`\sum`, `\prod`
-- 极限：`\lim`
-- 希腊字母：`\alpha`, `\beta`, `\gamma`, ...
-- 三角函数：`\sin`, `\cos`, `\tan`
-- 对数：`\log`, `\ln`, `\exp`
-- 矩阵：`\matrix`, `\bmatrix`, `\cases`
-- 箭头：`\rightarrow`, `\leftarrow`, ...
-- 集合运算：`\in`, `\subset`, `\cup`, `\cap`
-- 比较运算符：`\le`, `\ge`, `\ne`, `\approx`
+40+ commonly used LaTeX commands, including:
+- Fractions: `\frac`
+- Roots: `\sqrt`, `\sqrtn`
+- Integrals: `\int`, `\oint`
+- Sum/Product: `\sum`, `\prod`
+- Limits: `\lim`
+- Greek letters: `\alpha`, `\beta`, `\gamma`, ...
+- Trig functions: `\sin`, `\cos`, `\tan`
+- Logarithms: `\log`, `\ln`, `\exp`
+- Matrices: `\matrix`, `\bmatrix`, `\cases`
+- Arrows: `\rightarrow`, `\leftarrow`, ...
+- Set operations: `\in`, `\subset`, `\cup`, `\cap`
+- Comparisons: `\le`, `\ge`, `\ne`, `\approx`
 
-## 版本历史
+## Version History
 
-### v1.5.0 (当前版本)
-- ✨ 新增：LaTeX 代码区语法高亮（命令、括号、数字、注释分色显示）
-- 🐛 修复：公式编辑区方向键失效问题（通过 JS capturing listener + executeCommand 绕过 Qt WebEngine 焦点路由问题）
-- 🐛 修复：移除未文档化的 `smart-focus` 属性
+### v1.5.0 (Current)
+- **New**: LaTeX syntax highlighting in code area (commands/braces/numbers/comments in distinct colors)
+- **Fix**: Arrow key navigation in formula area (via JS capturing listeners + MathLive executeCommand API)
+- **Fix**: Removed undocumented `smart-focus` attribute
+- **New**: PyInstaller standalone executable support
 
 ### v1.4.0
-- ✨ 新增：复制为图片功能（PNG）
-- ✨ 新增：导出 PNG/SVG 功能
-- ✨ 新增：公式历史记录（最近 50 条）
-- ✨ 新增：拖拽 .tex 文件打开
-- ✨ 新增：常用公式收藏功能
-- ✨ 新增：缩放控制（Ctrl+滚轮）
-- ✨ 新增：暗色主题支持
-- 🐛 修复：矩阵格式化添加多余行的问题
-- 🐛 修复：自动补全光标偏移问题
-- 🐛 修复：JS 模板注入漏洞
-- 🐛 修复：textarea↔math-field 循环更新
-- 🐛 修复：括号补全后不通知 Python
-- 🔄 升级：MathLive v0.109.1 → v0.111.1
+- **New**: Copy as PNG image (Ctrl+Shift+C)
+- **New**: Export PNG/SVG
+- **New**: Formula history (last 50)
+- **New**: Drag & drop .tex file open
+- **New**: Favorites management
+- **New**: Zoom control (Ctrl+scroll)
+- **New**: Dark theme
+- **Fix**: Matrix formatting extra rows
+- **Fix**: Autocomplete cursor offset
+- **Fix**: JS template injection vulnerability
+- **Fix**: textarea↔math-field circular update
+- **Fix**: Bracket completion not notifying Python
+- **Upgrade**: MathLive v0.109.1 → v0.111.1
 
 ### v1.3.0
-- 🐛 修复 7 个已知 bug
-- 改进稳定性
+- Fixed 7 known bugs
+- Improved stability
 
 ### v1.2.2
-- 初始稳定版本
+- Initial stable release
 
-## 技术栈
+## Tech Stack
 
-- **后端**：Python 3.8+ / PySide6 (Qt 6)
-- **前端**：HTML5 / CSS3 / JavaScript
-- **公式引擎**：MathLive 0.111.1
-- **架构**：单文件应用（~950 行 Python + 嵌入式 HTML/JS/CSS）
+- **Backend**: Python 3.8+ / PySide6 (Qt 6)
+- **Frontend**: HTML5 / CSS3 / JavaScript
+- **Formula Engine**: MathLive 0.111.1
+- **Architecture**: Single-file app (~1000 lines Python + embedded HTML/JS/CSS)
 
-## 项目结构
+## Project Structure
 
 ```
 HaTeX/
-├── HaTeX _v1.5.0.py    # 主程序（包含所有代码）
-├── mathlive/            # MathLive 库文件
+├── HaTeX _v1.5.0.py    # Main program (all code)
+├── mathlive/            # MathLive library files
 │   ├── mathlive.min.js
 │   ├── mathlive-static.css
 │   └── ...
-├── hatex_history.json   # 历史记录（自动生成）
-└── hatex_favorites.json # 收藏数据（自动生成）
+├── hatex_history.json   # History (auto-generated)
+└── hatex_favorites.json # Favorites (auto-generated)
 ```
 
-## 开发者
+## Developer
 
-**胡悠飏**  
-中国科学技术大学 25 级少年班  
-邮箱：youyanghu@mail.ustc.edu.cn
+**Youyang Hu (胡悠飏)**
+University of Science and Technology of China, Class of 2025, Special Class for the Gifted Young
+Email: youyanghu@mail.ustc.edu.cn
 
-## 许可证
+## License
 
-本项目采用 [MIT License](LICENSE) 开源协议。
+This project is licensed under the [MIT License](LICENSE).
 
-## 反馈与建议
+## Feedback
 
-欢迎通过以下方式联系：
-- **GitHub Issues**: 报告 bug 或提出功能建议
-- **邮箱**: youyanghu@mail.ustc.edu.cn
+- **GitHub Issues**: Report bugs or suggest features
+- **Email**: youyanghu@mail.ustc.edu.cn
 
 ---
 
-**当前版本**: v1.5.0 | **最后更新**: 2026-10-14
+**Current Version**: v1.5.0 | **Last Updated**: 2026-10-14
