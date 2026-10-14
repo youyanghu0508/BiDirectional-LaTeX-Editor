@@ -9,6 +9,11 @@ from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtGui import QAction, QKeySequence, QPixmap, QDragEnterEvent, QDropEvent
 from PySide6.QtWebEngineCore import QWebEngineSettings
 
+def get_bundle_dir():
+    if getattr(sys, 'frozen', False):
+        return sys._MEIPASS
+    return os.path.dirname(os.path.abspath(__file__))
+
 HISTORY_FILE = "hatex_history.json"
 FAVORITES_FILE = "hatex_favorites.json"
 MAX_HISTORY = 50
@@ -747,7 +752,11 @@ class MathEditorApp(QMainWindow):
         self.resize(800, 600)
         self.setAcceptDrops(True)
 
-        self.current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.bundle_dir = get_bundle_dir()
+        if getattr(sys, 'frozen', False):
+            self.data_dir = os.path.dirname(sys.executable)
+        else:
+            self.data_dir = self.bundle_dir
         self.current_latex = ""
         self.history = []
         self.favorites = []
@@ -769,7 +778,7 @@ class MathEditorApp(QMainWindow):
         settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
         
-        self.web_view.setHtml(HTML_CONTENT, QUrl.fromLocalFile(self.current_dir + "/"))
+        self.web_view.setHtml(HTML_CONTENT, QUrl.fromLocalFile(self.bundle_dir + "/"))
 
         self.channel = QWebChannel()
         self.channel.registerObject("bridge", self.bridge)
@@ -890,7 +899,7 @@ class MathEditorApp(QMainWindow):
             menu.addAction(action)
 
     def _load_history(self):
-        path = os.path.join(self.current_dir, HISTORY_FILE)
+        path = os.path.join(self.data_dir, HISTORY_FILE)
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 self.history = json.load(f)
@@ -898,7 +907,7 @@ class MathEditorApp(QMainWindow):
             self.history = []
 
     def _load_favorites(self):
-        path = os.path.join(self.current_dir, FAVORITES_FILE)
+        path = os.path.join(self.data_dir, FAVORITES_FILE)
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 self.favorites = json.load(f)
@@ -906,7 +915,7 @@ class MathEditorApp(QMainWindow):
             self.favorites = []
 
     def _persist_history(self):
-        path = os.path.join(self.current_dir, HISTORY_FILE)
+        path = os.path.join(self.data_dir, HISTORY_FILE)
         try:
             with open(path, 'w', encoding='utf-8') as f:
                 json.dump(self.history, f, ensure_ascii=False, indent=2)
@@ -914,7 +923,7 @@ class MathEditorApp(QMainWindow):
             pass
 
     def _persist_favorites(self):
-        path = os.path.join(self.current_dir, FAVORITES_FILE)
+        path = os.path.join(self.data_dir, FAVORITES_FILE)
         try:
             with open(path, 'w', encoding='utf-8') as f:
                 json.dump(self.favorites, f, ensure_ascii=False, indent=2)
