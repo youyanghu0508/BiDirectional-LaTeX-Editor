@@ -69,7 +69,7 @@ pip install PySide6
 
 3. 运行程序：
 ```bash
-python "HaTeX _v1.4.0.py"
+python "HaTeX _v1.5.0.py"
 ```
 
 ## 使用说明
@@ -114,7 +114,12 @@ python "HaTeX _v1.4.0.py"
 
 ## 版本历史
 
-### v1.4.0 (当前版本)
+### v1.5.0 (当前版本)
+- ✨ 新增：LaTeX 代码区语法高亮（命令、括号、数字、注释分色显示）
+- 🐛 修复：公式编辑区方向键失效问题（通过 JS capturing listener + executeCommand 绕过 Qt WebEngine 焦点路由问题）
+- 🐛 修复：移除未文档化的 `smart-focus` 属性
+
+### v1.4.0
 - ✨ 新增：复制为图片功能（PNG）
 - ✨ 新增：导出 PNG/SVG 功能
 - ✨ 新增：公式历史记录（最近 50 条）
@@ -147,7 +152,7 @@ python "HaTeX _v1.4.0.py"
 
 ```
 HaTeX/
-├── HaTeX _v1.4.0.py    # 主程序（包含所有代码）
+├── HaTeX _v1.5.0.py    # 主程序（包含所有代码）
 ├── mathlive/            # MathLive 库文件
 │   ├── mathlive.min.js
 │   ├── mathlive-static.css
@@ -174,4 +179,4 @@ HaTeX/
 
 ---
 
-**当前版本**: v1.4.0 | **最后更新**: 2026-10-13
+**当前版本**: v1.5.0 | **最后更新**: 2026-10-14

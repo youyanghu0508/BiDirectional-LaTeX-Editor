@@ -88,32 +88,11 @@ HTML_CONTENT = r"""
         }
         .code-container {
             height: 150px;
-            position: relative;
-            background: var(--bg-code);
-        }
-        #code-highlight {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            color: var(--text-code);
-            overflow: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            margin: 0;
-            border: none;
-            pointer-events: none;
         }
         #latex-output {
-            position: absolute;
-            top: 0; left: 0;
             height: 100%;
-            width: 100%;
-            background: transparent;
-            color: transparent;
-            caret-color: var(--text-code);
+            background: var(--bg-code);
+            color: var(--text-code);
             padding: 10px;
             font-family: monospace;
             font-size: 13px;
@@ -121,20 +100,9 @@ HTML_CONTENT = r"""
             border: none;
             resize: none;
             outline: none;
+            width: 100%;
             box-sizing: border-box;
-            overflow: hidden;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            z-index: 1;
         }
-        .hl-cmd { color: #c586c0; }
-        .hl-brace { color: #ffd700; }
-        .hl-number { color: #b5cea8; }
-        .hl-comment { color: #6a9955; font-style: italic; }
-        body.dark-mode .hl-cmd { color: #ce9178; }
-        body.dark-mode .hl-brace { color: #daa520; }
-        body.dark-mode .hl-number { color: #b5cea8; }
-        body.dark-mode .hl-comment { color: #6a9955; }
         .label {
             background: var(--bg-label);
             padding: 5px;
@@ -203,6 +171,7 @@ HTML_CONTENT = r"""
         <math-field
             id="mf"
             tabindex="0"
+            smart-focus="true"
             smart-mode="true">
         </math-field>
         <div id="autocomplete" class="autocomplete-suggestions"></div>
@@ -210,7 +179,6 @@ HTML_CONTENT = r"""
 
     <div class="label">LaTeX 代码区 (可编辑) - 支持自动补全，按 Tab 或 Enter 选择</div>
     <div class="code-container">
-        <pre id="code-highlight"></pre>
         <textarea id="latex-output" spellcheck="false"></textarea>
     </div>
 
@@ -331,39 +299,6 @@ HTML_CONTENT = r"""
             };
         }
 
-        // ========== LaTeX 语法高亮 ==========
-        function highlightLatex(text) {
-            if (!text) return '';
-            var html = text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-            html = html.replace(
-                /%(.*)/g,
-                '<span class="hl-comment">%$1</span>'
-            );
-            html = html.replace(
-                /\\[a-zA-Z@]+|\\[^a-zA-Z@]/g,
-                '<span class="hl-cmd">$&</span>'
-            );
-            html = html.replace(
-                /[{}]/g,
-                '<span class="hl-brace">$&</span>'
-            );
-            html = html.replace(
-                /(?<![&\w])(\d+\.?\d*)/g,
-                '<span class="hl-number">$1</span>'
-            );
-            return html;
-        }
-
-        function updateHighlight() {
-            var pre = document.getElementById('code-highlight');
-            if (pre) {
-                pre.innerHTML = highlightLatex(latexOutput.value) + '\n';
-            }
-        }
-
         function hideAutocomplete() {
             autocompleteDiv.style.display = 'none';
             currentSuggestions = [];
@@ -441,7 +376,6 @@ HTML_CONTENT = r"""
             mf.setValue(newValue);
             isSyncing = false;
             if (window.pythonBridge) window.pythonBridge.updateLatex(newValue);
-            updateHighlight();
 
             hideAutocomplete();
             textarea.focus();
@@ -521,7 +455,7 @@ HTML_CONTENT = r"""
             if (formatted !== currentLatex) {
                 isSyncing = true; mf.setValue(formatted); isSyncing = false;
                 latexOutput.value = formatted;
-                updateHighlight();
+    
                 if (window.pythonBridge) window.pythonBridge.updateLatex(formatted);
             }
         }
@@ -535,7 +469,6 @@ HTML_CONTENT = r"""
             if (isSyncing) return;
             const latex = mf.getValue();
             latexOutput.value = latex;
-            updateHighlight();
 
             if (window.pythonBridge) window.pythonBridge.updateLatex(latex);
             debouncedHistorySave();
@@ -557,7 +490,7 @@ HTML_CONTENT = r"""
                         latexOutput.setSelectionRange(cursorPos, cursorPos);
                         isSyncing = true; mf.setValue(latexOutput.value); isSyncing = false;
                         if (window.pythonBridge) window.pythonBridge.updateLatex(latexOutput.value);
-                        updateHighlight();
+            
                         debouncedCheckCompletions();
                         return;
                     }
@@ -565,7 +498,7 @@ HTML_CONTENT = r"""
             }
             isSyncing = true; mf.setValue(latex); isSyncing = false;
             if (window.pythonBridge) window.pythonBridge.updateLatex(latex);
-            updateHighlight();
+
             debouncedCheckCompletions();
             debouncedHistorySave();
         }
@@ -592,81 +525,11 @@ HTML_CONTENT = r"""
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') hideAutocomplete();
         });
 
-        // ========== 方向键修复 ==========
-        mf.addEventListener('focus', function() {
-            if (window.pythonBridge) window.pythonBridge.mfFocusChanged(true);
-        });
-        mf.addEventListener('blur', function() {
-            if (window.pythonBridge) window.pythonBridge.mfFocusChanged(false);
-        });
-
-        mf.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
-                e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                if (document.activeElement === mf || mf.contains(document.activeElement)) {
-                    var commands = {
-                        'ArrowLeft': 'moveToPreviousChar',
-                        'ArrowRight': 'moveToNextChar',
-                        'ArrowUp': 'moveUp',
-                        'ArrowDown': 'moveDown'
-                    };
-                    var cmd = commands[e.key];
-                    if (cmd && mf.executeCommand) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        mf.executeCommand(cmd);
-                    }
-                }
-            }
-        }, true);
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
-                e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                if (!mf || !mf.executeCommand) return;
-                var path = e.composedPath ? e.composedPath() : [];
-                var inMathField = false;
-                for (var i = 0; i < path.length; i++) {
-                    if (path[i] === mf) { inMathField = true; break; }
-                }
-                if (!inMathField && document.activeElement !== mf) return;
-                var commands = {
-                    'ArrowLeft': 'moveToPreviousChar',
-                    'ArrowRight': 'moveToNextChar',
-                    'ArrowUp': 'moveUp',
-                    'ArrowDown': 'moveDown'
-                };
-                var cmd = commands[e.key];
-                if (cmd) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    mf.executeCommand(cmd);
-                }
-            }
-        }, true);
-
-        function handleArrowKey(direction) {
-            if (!mf) return false;
-            var commands = {
-                'left': 'moveToPreviousChar',
-                'right': 'moveToNextChar',
-                'up': 'moveUp',
-                'down': 'moveDown'
-            };
-            var cmd = commands[direction];
-            if (cmd && mf.executeCommand) {
-                mf.executeCommand(cmd);
-                return true;
-            }
-            return false;
-        }
-        window.handleArrowKey = handleArrowKey;
-
         function setMathField(latex) {
             if (mf.getValue() !== latex) {
                 isSyncing = true; mf.setValue(latex); isSyncing = false;
                 latexOutput.value = latex;
-                updateHighlight();
+    
             }
         }
 
@@ -708,7 +571,6 @@ class Bridge(QObject):
     historySaveRequested = Signal(str)
     favoritesSaveRequested = Signal(str)
     initRequested = Signal()
-    focusStateChanged = Signal(bool)
 
     def __init__(self):
         super().__init__()
@@ -735,10 +597,6 @@ class Bridge(QObject):
     def requestInitData(self):
         self.initRequested.emit()
 
-    @Slot(bool)
-    def mfFocusChanged(self, focused):
-        self.focusStateChanged.emit(focused)
-
 
 class MathEditorApp(QMainWindow):
     def __init__(self):
@@ -759,8 +617,6 @@ class MathEditorApp(QMainWindow):
         self.bridge.initRequested.connect(self.send_init_data)
         self.bridge.historySaveRequested.connect(self._js_save_history)
         self.bridge.favoritesSaveRequested.connect(self._js_save_favorites)
-        self.bridge.focusStateChanged.connect(self._on_mf_focus_changed)
-        self._mf_focused = False
 
         self.web_view = QWebEngineView()
         
@@ -955,9 +811,6 @@ class MathEditorApp(QMainWindow):
 
     def on_latex_changed_from_js(self, latex_code):
         self.current_latex = latex_code
-
-    def _on_mf_focus_changed(self, focused):
-        self._mf_focused = focused
 
     def set_formula_from_python(self, latex_code):
         js_literal = json.dumps(latex_code)

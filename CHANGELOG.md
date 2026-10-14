@@ -2,6 +2,28 @@
 
 All notable changes to HaTeX will be documented in this file.
 
+## [1.5.0] - 2026-10-14
+
+### 新增功能
+- **语法高亮**：LaTeX 代码区语法高亮，使用透明 textarea + 高亮 pre 叠加方案
+  - LaTeX 命令（\frac, \sqrt 等）紫色/橙色显示
+  - 括号（{}, []）金色显示
+  - 数字绿色显示
+  - 注释（%）灰色斜体显示
+  - 支持亮色/暗色主题
+
+### 修复问题
+- **方向键失效**：修复公式编辑区（math-field）方向键完全无效的问题
+  - 通过 JS capturing phase keydown listener 拦截方向键
+  - 使用 MathLive executeCommand API 直接移动光标
+  - 支持 document-level composedPath 检测，兼容 shadow DOM 事件
+  - 数字、矩阵、幂次等结构中的方向键导航均恢复正常
+
+### 技术变更
+- 移除未文档化的 `smart-focus` 属性
+- 新增 Bridge.focusStateChanged 信号用于焦点跟踪
+- 新增 highlightLatex() 和 updateHighlight() JS 函数
+
 ## [1.4.0] - 2026-10-13
 
 ### 新增功能
