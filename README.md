@@ -62,11 +62,11 @@ A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWY
 ### Run from Source
 ```bash
 pip install PySide6
-python "HaTeX _v1.5.0.py"
+python "HaTeX _v1.5.1.py"
 ```
 
 ### Standalone Executable
-Download `HaTeX-v1.5.0-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.0.exe`. No Python installation required.
+Download `HaTeX-v1.5.1-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.1.exe`. No Python installation required.
 
 ## Usage
 
@@ -109,7 +109,11 @@ Download `HaTeX-v1.5.0-windows-x64.zip` from [Releases](https://github.com/youya
 
 ## Version History
 
-### v1.5.0 (Current)
+### v1.5.1 (Current)
+- **Fix**: Textarea scrolling issues (scrollbar drag, mouse wheel to bottom, ArrowDown to last line)
+- **Fix**: Syntax highlight overlay scroll synchronization with textarea
+
+### v1.5.0
 - **New**: LaTeX syntax highlighting in code area (commands/braces/numbers/comments in distinct colors)
 - **Fix**: Arrow key navigation in formula area (via JS capturing listeners + MathLive executeCommand API)
 - **Fix**: Removed undocumented `smart-focus` attribute
@@ -148,7 +152,7 @@ Download `HaTeX-v1.5.0-windows-x64.zip` from [Releases](https://github.com/youya
 
 ```
 HaTeX/
-├── HaTeX _v1.5.0.py    # Main program (all code)
+├── HaTeX _v1.5.1.py    # Main program (all code)
 ├── mathlive/            # MathLive library files
 │   ├── mathlive.min.js
 │   ├── mathlive-static.css
@@ -174,4 +178,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Current Version**: v1.5.0 | **Last Updated**: 2026-10-14
+**Current Version**: v1.5.1 | **Last Updated**: 2026-10-14
