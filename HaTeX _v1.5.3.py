@@ -991,9 +991,9 @@ class MathEditorApp(QMainWindow):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
-                return config.get("language", "zh")
+                return config.get("language", "en")
         except (FileNotFoundError, json.JSONDecodeError):
-            return "zh"
+            return "en"
 
     def _save_language(self, lang):
         self.current_lang = lang
@@ -1201,6 +1201,7 @@ class MathEditorApp(QMainWindow):
             self._js_save_history(self.current_latex)
 
     def send_init_data(self):
+        self.web_view.page().runJavaScript(f"setLanguage('{self.current_lang}');")
         if self.history:
             last = self.history[-1]
             latex = last if isinstance(last, str) else last.get("latex", "")
