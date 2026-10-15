@@ -301,7 +301,7 @@ HTML_CONTENT = r"""
 
     <div class="label label-with-btn" id="label-code">
         <span id="label-code-text">LaTeX 代码区 (可编辑) - 支持自动补全，按 Tab 或 Enter 选择</span>
-        <button id="btn-copy-latex" title="复制 LaTeX 代码">📋</button>
+        <button id="btn-copy-latex" title="复制 LaTeX 代码" type="button" onclick="window.hatexCopyLatex(event)">📋</button>
     </div>
     <div class="code-container">
         <pre id="code-highlight"></pre>
@@ -311,6 +311,55 @@ HTML_CONTENT = r"""
     <div class="info-label" id="info-label">开发者：中国科学技术大学-25级-少计-胡悠飏<br>邮箱：youyanghu@mail.ustc.edu.cn<br>⚠️v1.5.3版仅供参考，手册见附件，如有漏洞与建议欢迎邮件联系</div>
 
     <div id="zoom-indicator">100%</div>
+
+    <!-- 独立的复制按钮处理器：不依赖主编辑器脚本成功初始化 -->
+    <script>
+    (function () {
+        window.hatexCopyLatex = function (event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
+            var btn = document.getElementById('btn-copy-latex');
+            var mfEl = document.getElementById('mf');
+            var sourceEl = document.getElementById('latex-output');
+            var latex = '';
+            try {
+                if (mfEl && typeof mfEl.getValue === 'function') latex = mfEl.getValue('latex') || mfEl.getValue() || '';
+            } catch (e) {}
+            if (!latex && sourceEl) latex = sourceEl.value || '';
+            if (!latex) {
+                if (btn) { btn.textContent = '⚠️'; btn.title = '没有可复制的公式'; }
+                return;
+            }
+            function feedback(ok, message) {
+                if (!btn) return;
+                btn.textContent = ok ? '✅' : '⚠️';
+                btn.title = message;
+                window.setTimeout(function () {
+                    btn.textContent = '📋'; btn.title = '复制 LaTeX 代码';
+                }, 1200);
+            }
+            try {
+                if (window.pythonBridge && typeof window.pythonBridge.copyToClipboard === 'function') {
+                    window.pythonBridge.copyToClipboard(latex);
+                    feedback(true, '已发送到系统剪贴板');
+                    return;
+                }
+            } catch (e) {}
+            // Qt WebEngine 中 clipboard API 可能不可用，使用临时文本框兼容复制。
+            try {
+                var temp = document.createElement('textarea');
+                temp.value = latex;
+                temp.setAttribute('readonly', '');
+                temp.style.position = 'fixed'; temp.style.left = '-10000px'; temp.style.top = '0';
+                document.body.appendChild(temp); temp.focus(); temp.select();
+                var ok = document.execCommand('copy');
+                document.body.removeChild(temp);
+                feedback(ok, ok ? '已复制 LaTeX 代码' : '复制失败：请检查页面脚本或剪贴板');
+            } catch (e) {
+                feedback(false, '复制失败：' + String(e));
+            }
+        };
+    })();
+    </script>
 
     <script>
         const mf = document.getElementById('mf');
@@ -715,43 +764,7 @@ HTML_CONTENT = r"""
             }
         });
 
-        document.getElementById('btn-copy-latex').addEventListener('click', function() {
-            // 优先读取可视化公式的实时值，避免源码框尚未同步时复制到空内容/旧内容。
-            var latex = '';
-            try {
-                if (mf && typeof mf.getValue === 'function') latex = mf.getValue('latex') || '';
-            } catch (e) {}
-            if (!latex && latexOutput) latex = latexOutput.value || '';
-
-            var btn = document.getElementById('btn-copy-latex');
-            if (!latex) {
-                btn.title = '没有可复制的公式';
-                btn.textContent = '⚠️';
-                setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1200);
-                return;
-            }
-
-            // QWebChannel 连接可能尚未完成；仅在桥接对象可用时调用。
-            if (window.pythonBridge && typeof window.pythonBridge.copyToClipboard === 'function') {
-                window.pythonBridge.copyToClipboard(latex);
-                btn.title = '已复制 LaTeX 代码';
-                btn.textContent = '✅';
-                setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1000);
-            } else if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(latex).then(function() {
-                    btn.textContent = '✅';
-                    setTimeout(function() { btn.textContent = '📋'; }, 1000);
-                }).catch(function() {
-                    btn.title = '复制失败，请使用文件菜单中的复制功能';
-                    btn.textContent = '⚠️';
-                    setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1200);
-                });
-            } else {
-                btn.title = '复制服务尚未就绪，请稍后重试';
-                btn.textContent = '⚠️';
-                setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1200);
-            }
-        });
+        // 复制按钮由上方独立脚本处理，避免主脚本中途报错导致按钮失效。
 
         mf.addEventListener('input', onMathFieldInput);
         latexOutput.addEventListener('input', onLatexOutputInput);
