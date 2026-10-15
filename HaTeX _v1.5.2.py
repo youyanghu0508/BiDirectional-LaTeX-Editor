@@ -32,15 +32,13 @@ TRANSLATIONS = {
         "action_export_png": "导出为 PNG...",
         "action_export_svg": "导出为 SVG (MathML)...",
         "action_open_tex": "打开 .tex 文件...",
-        "action_save_tex": "保存 .tex 文件...",
+        "action_save_tex": "保存为 .tex 文件...",
         "action_format_matrix": "格式化矩阵",
         "action_zoom_in": "放大",
         "action_zoom_out": "缩小",
         "action_zoom_reset": "重置缩放",
         "action_dark_mode": "暗色主题",
         "action_add_favorite": "收藏当前公式",
-        "action_lang_zh": "中文",
-        "action_lang_en": "English",
         "dialog_export_png": "导出 PNG",
         "dialog_export_mathml": "导出 MathML",
         "dialog_open_tex": "打开 .tex 文件",
@@ -71,8 +69,6 @@ TRANSLATIONS = {
         "action_zoom_reset": "Reset Zoom",
         "action_dark_mode": "Dark Theme",
         "action_add_favorite": "Favorite Current Formula",
-        "action_lang_zh": "中文",
-        "action_lang_en": "English",
         "dialog_export_png": "Export PNG",
         "dialog_export_mathml": "Export MathML",
         "dialog_open_tex": "Open .tex File",
@@ -86,7 +82,7 @@ TRANSLATIONS = {
     }
 }
 
-HTML_CONTENT_TEMPLATE = r"""
+HTML_CONTENT = r"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -272,7 +268,7 @@ HTML_CONTENT_TEMPLATE = r"""
 </head>
 <body>
 
-    <div class="label" id="label-editor">__LABEL_EDITOR__</div>
+    <div class="label" id="label-editor">可视化公式编辑区</div>
     <div id="editor-container">
         <math-field
             id="mf"
@@ -282,13 +278,13 @@ HTML_CONTENT_TEMPLATE = r"""
         <div id="autocomplete" class="autocomplete-suggestions"></div>
     </div>
 
-    <div class="label" id="label-code">__LABEL_CODE__</div>
+    <div class="label" id="label-code">LaTeX 代码区 (可编辑) - 支持自动补全，按 Tab 或 Enter 选择</div>
     <div class="code-container">
         <pre id="code-highlight"></pre>
         <textarea id="latex-output" spellcheck="false"></textarea>
     </div>
 
-    <div class="info-label" id="info-label">__INFO_LABEL__</div>
+    <div class="info-label" id="info-label">开发者：中国科学技术大学-25级-少计-胡悠飏<br>邮箱：youyanghu@mail.ustc.edu.cn<br>⚠️v1.5.2版仅供参考，手册见附件，如有漏洞与建议欢迎邮件联系</div>
 
     <div id="zoom-indicator">100%</div>
 
@@ -300,142 +296,100 @@ HTML_CONTENT_TEMPLATE = r"""
 
         let currentFontSize = 24;
         let isDarkMode = false;
-        let currentLang = '__LANG__';
 
-        const i18n = {
-            zh: {
-                label_editor: "可视化公式编辑区",
-                label_code: "LaTeX 代码区 (可编辑) - 支持自动补全，按 Tab 或 Enter 选择",
-                info_label: "开发者：中国科学技术大学-25级-少计-胡悠飏<br>邮箱：youyanghu@mail.ustc.edu.cn<br>⚠️v1.5.2版仅供参考，手册见附件，如有漏洞与建议欢迎邮件联系",
-                completions: [
-                    { trigger: "frac", command: "\\frac{}{}", description: "分数", cursorOffset: 6 },
-                    { trigger: "sqrt", command: "\\sqrt{}", description: "平方根", cursorOffset: 6 },
-                    { trigger: "sqrtn", command: "\\sqrt[]{}", description: "n次根号", cursorOffset: 8 },
-                    { trigger: "int", command: "\\int_{}^{}", description: "定积分", cursorOffset: 6 },
-                    { trigger: "oint", command: "\\oint_{}^{}", description: "环路积分", cursorOffset: 7 },
-                    { trigger: "sum", command: "\\sum_{}^{}", description: "求和", cursorOffset: 6 },
-                    { trigger: "prod", command: "\\prod_{}^{}", description: "求积", cursorOffset: 7 },
-                    { trigger: "lim", command: "\\lim_{}", description: "极限", cursorOffset: 6 },
-                    { trigger: "infty", command: "\\infty", description: "无穷大", cursorOffset: 0 },
-                    { trigger: "alpha", command: "\\alpha", description: "希腊字母α", cursorOffset: 0 },
-                    { trigger: "beta", command: "\\beta", description: "希腊字母β", cursorOffset: 0 },
-                    { trigger: "gamma", command: "\\gamma", description: "希腊字母γ", cursorOffset: 0 },
-                    { trigger: "delta", command: "\\delta", description: "希腊字母δ", cursorOffset: 0 },
-                    { trigger: "theta", command: "\\theta", description: "希腊字母θ", cursorOffset: 0 },
-                    { trigger: "pi", command: "\\pi", description: "圆周率π", cursorOffset: 0 },
-                    { trigger: "sigma", command: "\\sigma", description: "希腊字母σ", cursorOffset: 0 },
-                    { trigger: "omega", command: "\\omega", description: "希腊字母ω", cursorOffset: 0 },
-                    { trigger: "rightarrow", command: "\\rightarrow", description: "右箭头", cursorOffset: 0 },
-                    { trigger: "leftarrow", command: "\\leftarrow", description: "左箭头", cursorOffset: 0 },
-                    { trigger: "Rightarrow", command: "\\Rightarrow", description: "右双箭头", cursorOffset: 0 },
-                    { trigger: "Leftarrow", command: "\\Leftarrow", description: "左双箭头", cursorOffset: 0 },
-                    { trigger: "cdot", command: "\\cdot", description: "点乘", cursorOffset: 0 },
-                    { trigger: "times", command: "\\times", description: "叉乘", cursorOffset: 0 },
-                    { trigger: "pm", command: "\\pm", description: "正负号", cursorOffset: 0 },
-                    { trigger: "mp", command: "\\mp", description: "负正号", cursorOffset: 0 },
-                    { trigger: "le", command: "\\le", description: "小于等于", cursorOffset: 0 },
-                    { trigger: "ge", command: "\\ge", description: "大于等于", cursorOffset: 0 },
-                    { trigger: "ne", command: "\\ne", description: "不等于", cursorOffset: 0 },
-                    { trigger: "approx", command: "\\approx", description: "约等于", cursorOffset: 0 },
-                    { trigger: "partial", command: "\\partial", description: "偏导数", cursorOffset: 0 },
-                    { trigger: "nabla", command: "\\nabla", description: "梯度算子", cursorOffset: 0 },
-                    { trigger: "forall", command: "\\forall", description: "任意", cursorOffset: 0 },
-                    { trigger: "exists", command: "\\exists", description: "存在", cursorOffset: 0 },
-                    { trigger: "in", command: "\\in", description: "属于", cursorOffset: 0 },
-                    { trigger: "subset", command: "\\subset", description: "子集", cursorOffset: 0 },
-                    { trigger: "cup", command: "\\cup", description: "并集", cursorOffset: 0 },
-                    { trigger: "cap", command: "\\cap", description: "交集", cursorOffset: 0 },
-                    { trigger: "sin", command: "\\sin", description: "正弦", cursorOffset: 0 },
-                    { trigger: "cos", command: "\\cos", description: "余弦", cursorOffset: 0 },
-                    { trigger: "tan", command: "\\tan", description: "正切", cursorOffset: 0 },
-                    { trigger: "log", command: "\\log", description: "对数", cursorOffset: 0 },
-                    { trigger: "ln", command: "\\ln", description: "自然对数", cursorOffset: 0 },
-                    { trigger: "exp", command: "\\exp", description: "指数函数", cursorOffset: 0 },
-                    { trigger: "matrix", command: "\\begin{pmatrix}\n    a & b \\\\\n    c & d\n\\end{pmatrix}", description: "矩阵(pmatrix)", cursorOffset: 0 },
-                    { trigger: "bmatrix", command: "\\begin{bmatrix}\n    a & b \\\\\n    c & d\n\\end{bmatrix}", description: "矩阵(bmatrix)", cursorOffset: 0 },
-                    { trigger: "cases", command: "\\begin{cases}\n    a & \\text{if } x>0 \\\\\n    b & \\text{otherwise}\n\\end{cases}", description: "分段函数", cursorOffset: 0 }
-                ]
-            },
-            en: {
-                label_editor: "Visual Formula Editor",
-                label_code: "LaTeX Code Area (Editable) - Autocomplete supported, press Tab or Enter to select",
-                info_label: "Developer: USTC SCGI 2025 Hu Youyang<br>Email: youyanghu@mail.ustc.edu.cn<br>⚠️v1.5.2 for reference only, see manual. Bugs & suggestions welcome via email",
-                completions: [
-                    { trigger: "frac", command: "\\frac{}{}", description: "Fraction", cursorOffset: 6 },
-                    { trigger: "sqrt", command: "\\sqrt{}", description: "Square root", cursorOffset: 6 },
-                    { trigger: "sqrtn", command: "\\sqrt[]{}", description: "Nth root", cursorOffset: 8 },
-                    { trigger: "int", command: "\\int_{}^{}", description: "Definite integral", cursorOffset: 6 },
-                    { trigger: "oint", command: "\\oint_{}^{}", description: "Contour integral", cursorOffset: 7 },
-                    { trigger: "sum", command: "\\sum_{}^{}", description: "Summation", cursorOffset: 6 },
-                    { trigger: "prod", command: "\\prod_{}^{}", description: "Product", cursorOffset: 7 },
-                    { trigger: "lim", command: "\\lim_{}", description: "Limit", cursorOffset: 6 },
-                    { trigger: "infty", command: "\\infty", description: "Infinity", cursorOffset: 0 },
-                    { trigger: "alpha", command: "\\alpha", description: "Greek letter α", cursorOffset: 0 },
-                    { trigger: "beta", command: "\\beta", description: "Greek letter β", cursorOffset: 0 },
-                    { trigger: "gamma", command: "\\gamma", description: "Greek letter γ", cursorOffset: 0 },
-                    { trigger: "delta", command: "\\delta", description: "Greek letter δ", cursorOffset: 0 },
-                    { trigger: "theta", command: "\\theta", description: "Greek letter θ", cursorOffset: 0 },
-                    { trigger: "pi", command: "\\pi", description: "Pi", cursorOffset: 0 },
-                    { trigger: "sigma", command: "\\sigma", description: "Greek letter σ", cursorOffset: 0 },
-                    { trigger: "omega", command: "\\omega", description: "Greek letter ω", cursorOffset: 0 },
-                    { trigger: "rightarrow", command: "\\rightarrow", description: "Right arrow", cursorOffset: 0 },
-                    { trigger: "leftarrow", command: "\\leftarrow", description: "Left arrow", cursorOffset: 0 },
-                    { trigger: "Rightarrow", command: "\\Rightarrow", description: "Right double arrow", cursorOffset: 0 },
-                    { trigger: "Leftarrow", command: "\\Leftarrow", description: "Left double arrow", cursorOffset: 0 },
-                    { trigger: "cdot", command: "\\cdot", description: "Dot product", cursorOffset: 0 },
-                    { trigger: "times", command: "\\times", description: "Cross product", cursorOffset: 0 },
-                    { trigger: "pm", command: "\\pm", description: "Plus-minus", cursorOffset: 0 },
-                    { trigger: "mp", command: "\\mp", description: "Minus-plus", cursorOffset: 0 },
-                    { trigger: "le", command: "\\le", description: "Less than or equal", cursorOffset: 0 },
-                    { trigger: "ge", command: "\\ge", description: "Greater than or equal", cursorOffset: 0 },
-                    { trigger: "ne", command: "\\ne", description: "Not equal", cursorOffset: 0 },
-                    { trigger: "approx", command: "\\approx", description: "Approximately equal", cursorOffset: 0 },
-                    { trigger: "partial", command: "\\partial", description: "Partial derivative", cursorOffset: 0 },
-                    { trigger: "nabla", command: "\\nabla", description: "Gradient operator", cursorOffset: 0 },
-                    { trigger: "forall", command: "\\forall", description: "For all", cursorOffset: 0 },
-                    { trigger: "exists", command: "\\exists", description: "Exists", cursorOffset: 0 },
-                    { trigger: "in", command: "\\in", description: "Element of", cursorOffset: 0 },
-                    { trigger: "subset", command: "\\subset", description: "Subset", cursorOffset: 0 },
-                    { trigger: "cup", command: "\\cup", description: "Union", cursorOffset: 0 },
-                    { trigger: "cap", command: "\\cap", description: "Intersection", cursorOffset: 0 },
-                    { trigger: "sin", command: "\\sin", description: "Sine", cursorOffset: 0 },
-                    { trigger: "cos", command: "\\cos", description: "Cosine", cursorOffset: 0 },
-                    { trigger: "tan", command: "\\tan", description: "Tangent", cursorOffset: 0 },
-                    { trigger: "log", command: "\\log", description: "Logarithm", cursorOffset: 0 },
-                    { trigger: "ln", command: "\\ln", description: "Natural log", cursorOffset: 0 },
-                    { trigger: "exp", command: "\\exp", description: "Exponential", cursorOffset: 0 },
-                    { trigger: "matrix", command: "\\begin{pmatrix}\n    a & b \\\\\n    c & d\n\\end{pmatrix}", description: "Matrix (pmatrix)", cursorOffset: 0 },
-                    { trigger: "bmatrix", command: "\\begin{bmatrix}\n    a & b \\\\\n    c & d\n\\end{bmatrix}", description: "Matrix (bmatrix)", cursorOffset: 0 },
-                    { trigger: "cases", command: "\\begin{cases}\n    a & \\text{if } x>0 \\\\\n    b & \\text{otherwise}\n\\end{cases}", description: "Piecewise function", cursorOffset: 0 }
-                ]
-            }
-        };
+        const latexCompletions = [
+            { trigger: "frac", command: "\\frac{}{}", description: "分数", cursorOffset: 6 },
+            { trigger: "sqrt", command: "\\sqrt{}", description: "平方根", cursorOffset: 6 },
+            { trigger: "sqrtn", command: "\\sqrt[]{}", description: "n次根号", cursorOffset: 8 },
+            { trigger: "int", command: "\\int_{}^{}", description: "定积分", cursorOffset: 6 },
+            { trigger: "oint", command: "\\oint_{}^{}", description: "环路积分", cursorOffset: 7 },
+            { trigger: "sum", command: "\\sum_{}^{}", description: "求和", cursorOffset: 6 },
+            { trigger: "prod", command: "\\prod_{}^{}", description: "求积", cursorOffset: 7 },
+            { trigger: "lim", command: "\\lim_{}", description: "极限", cursorOffset: 6 },
+            { trigger: "infty", command: "\\infty", description: "无穷大", cursorOffset: 0 },
+            { trigger: "alpha", command: "\\alpha", description: "希腊字母α", cursorOffset: 0 },
+            { trigger: "beta", command: "\\beta", description: "希腊字母β", cursorOffset: 0 },
+            { trigger: "gamma", command: "\\gamma", description: "希腊字母γ", cursorOffset: 0 },
+            { trigger: "delta", command: "\\delta", description: "希腊字母δ", cursorOffset: 0 },
+            { trigger: "theta", command: "\\theta", description: "希腊字母θ", cursorOffset: 0 },
+            { trigger: "pi", command: "\\pi", description: "圆周率π", cursorOffset: 0 },
+            { trigger: "sigma", command: "\\sigma", description: "希腊字母σ", cursorOffset: 0 },
+            { trigger: "omega", command: "\\omega", description: "希腊字母ω", cursorOffset: 0 },
+            { trigger: "rightarrow", command: "\\rightarrow", description: "右箭头", cursorOffset: 0 },
+            { trigger: "leftarrow", command: "\\leftarrow", description: "左箭头", cursorOffset: 0 },
+            { trigger: "Rightarrow", command: "\\Rightarrow", description: "右双箭头", cursorOffset: 0 },
+            { trigger: "Leftarrow", command: "\\Leftarrow", description: "左双箭头", cursorOffset: 0 },
+            { trigger: "cdot", command: "\\cdot", description: "点乘", cursorOffset: 0 },
+            { trigger: "times", command: "\\times", description: "叉乘", cursorOffset: 0 },
+            { trigger: "pm", command: "\\pm", description: "正负号", cursorOffset: 0 },
+            { trigger: "mp", command: "\\mp", description: "负正号", cursorOffset: 0 },
+            { trigger: "le", command: "\\le", description: "小于等于", cursorOffset: 0 },
+            { trigger: "ge", command: "\\ge", description: "大于等于", cursorOffset: 0 },
+            { trigger: "ne", command: "\\ne", description: "不等于", cursorOffset: 0 },
+            { trigger: "approx", command: "\\approx", description: "约等于", cursorOffset: 0 },
+            { trigger: "partial", command: "\\partial", description: "偏导数", cursorOffset: 0 },
+            { trigger: "nabla", command: "\\nabla", description: "梯度算子", cursorOffset: 0 },
+            { trigger: "forall", command: "\\forall", description: "任意", cursorOffset: 0 },
+            { trigger: "exists", command: "\\exists", description: "存在", cursorOffset: 0 },
+            { trigger: "in", command: "\\in", description: "属于", cursorOffset: 0 },
+            { trigger: "subset", command: "\\subset", description: "子集", cursorOffset: 0 },
+            { trigger: "cup", command: "\\cup", description: "并集", cursorOffset: 0 },
+            { trigger: "cap", command: "\\cap", description: "交集", cursorOffset: 0 },
+            { trigger: "sin", command: "\\sin", description: "正弦", cursorOffset: 0 },
+            { trigger: "cos", command: "\\cos", description: "余弦", cursorOffset: 0 },
+            { trigger: "tan", command: "\\tan", description: "正切", cursorOffset: 0 },
+            { trigger: "log", command: "\\log", description: "对数", cursorOffset: 0 },
+            { trigger: "ln", command: "\\ln", description: "自然对数", cursorOffset: 0 },
+            { trigger: "exp", command: "\\exp", description: "指数函数", cursorOffset: 0 },
+            { trigger: "matrix", command: "\\begin{pmatrix}\n    a & b \\\\\n    c & d\n\\end{pmatrix}", description: "矩阵(pmatrix)", cursorOffset: 0 },
+            { trigger: "bmatrix", command: "\\begin{bmatrix}\n    a & b \\\\\n    c & d\n\\end{bmatrix}", description: "矩阵(bmatrix)", cursorOffset: 0 },
+            { trigger: "cases", command: "\\begin{cases}\n    a & \\text{if } x>0 \\\\\n    b & \\text{otherwise}\n\\end{cases}", description: "分段函数", cursorOffset: 0 }
+        ];
 
-        let latexCompletions = i18n[currentLang].completions;
         let currentSuggestions = [];
         let selectedIndex = -1;
         let currentTriggerWord = "";
         let isSyncing = false;
+        let currentLang = "zh";
+
+        const uiTranslations = {
+            zh: {
+                label_editor: "可视化公式编辑区",
+                label_code: "LaTeX 代码区 (可编辑) - 支持自动补全，按 Tab 或 Enter 选择",
+                info_label: "开发者：中国科学技术大学-25级-少计-胡悠飏<br>邮箱：youyanghu@mail.ustc.edu.cn<br>⚠️v1.5.2版仅供参考，手册见附件，如有漏洞与建议欢迎邮件联系"
+            },
+            en: {
+                label_editor: "Visual Formula Editor",
+                label_code: "LaTeX Code (Editable) - Autocomplete supported, press Tab or Enter to select",
+                info_label: "Developer: USTC SCGI 2025 Hu Youyang<br>Email: youyanghu@mail.ustc.edu.cn<br>⚠️v1.5.2 for reference only. Bugs & suggestions welcome via email"
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            var t = uiTranslations[lang];
+            if (!t) return;
+            var el;
+            el = document.getElementById('label-editor');
+            if (el) el.textContent = t.label_editor;
+            el = document.getElementById('label-code');
+            if (el) el.textContent = t.label_code;
+            el = document.getElementById('info-label');
+            if (el) el.innerHTML = t.info_label;
+            if (window.pythonBridge) window.pythonBridge.saveLanguage(lang);
+        }
+        window.setLanguage = setLanguage;
 
         if (mf) {
             mf.setOptions({
                 smartMode: true,
                 smartFence: true,
-                smartSuperscript: true
+                smartSuperscript: true,
+                locale: 'zh-CN'
             });
         }
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            latexCompletions = i18n[lang].completions;
-            document.getElementById('label-editor').textContent = i18n[lang].label_editor;
-            document.getElementById('label-code').textContent = i18n[lang].label_code;
-            document.getElementById('info-label').innerHTML = i18n[lang].info_label;
-            if (window.pythonBridge) window.pythonBridge.saveLanguage(lang);
-        }
-        window.setLanguage = setLanguage;
-
-        // ========== Zoom ==========
+        // ========== 缩放控制 ==========
         document.getElementById('editor-container').addEventListener('wheel', function(e) {
             if (e.ctrlKey) {
                 e.preventDefault();
@@ -457,7 +411,7 @@ HTML_CONTENT_TEMPLATE = r"""
             mf.style.fontSize = currentFontSize + 'px';
         }
 
-        // ========== Dark Mode ==========
+        // ========== 暗色主题 ==========
         function toggleDarkMode(dark) {
             isDarkMode = dark;
             if (dark) {
@@ -467,7 +421,7 @@ HTML_CONTENT_TEMPLATE = r"""
             }
         }
 
-        // ========== Helpers ==========
+        // ========== 辅助函数 ==========
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -476,7 +430,7 @@ HTML_CONTENT_TEMPLATE = r"""
             };
         }
 
-        // ========== Syntax Highlighting ==========
+        // ========== LaTeX 语法高亮 ==========
         function highlightLatex(text) {
             if (!text) return '';
             var html = text
@@ -525,7 +479,7 @@ HTML_CONTENT_TEMPLATE = r"""
             suggestions.forEach((item, idx) => {
                 const div = document.createElement('div');
                 if (idx === 0) div.classList.add('selected');
-                div.innerHTML = '<span class="suggestion-command">' + item.trigger + '</span><span class="suggestion-desc"> → ' + item.description + '</span>';
+                div.innerHTML = '<span class="suggestion-command">' + item.trigger + '</span><span class="suggestion-desc"> \u2192 ' + item.description + '</span>';
                 div.onclick = () => applyCompletion(item);
                 div.onmouseenter = () => { selectedIndex = idx; updateSelectedStyle(); };
                 autocompleteDiv.appendChild(div);
@@ -619,7 +573,7 @@ HTML_CONTENT_TEMPLATE = r"""
             hideAutocomplete();
         }
 
-        // ========== Matrix Formatting ==========
+        // ========== 矩阵格式化 ==========
         function formatMatrix(latexStr) {
             const envNames = ['pmatrix', 'bmatrix', 'vmatrix', 'Bmatrix', 'Vmatrix', 'matrix'];
             let result = latexStr;
@@ -745,7 +699,7 @@ HTML_CONTENT_TEMPLATE = r"""
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') hideAutocomplete();
         });
 
-        // ========== Arrow Key Fix ==========
+        // ========== 方向键修复 ==========
         mf.addEventListener('focus', function() {
             if (window.pythonBridge) window.pythonBridge.mfFocusChanged(true);
         });
@@ -932,8 +886,7 @@ class MathEditorApp(QMainWindow):
         settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)
         
-        html_content = self._get_localized_html()
-        self.web_view.setHtml(html_content, QUrl.fromLocalFile(self.bundle_dir + "/"))
+        self.web_view.setHtml(HTML_CONTENT, QUrl.fromLocalFile(self.bundle_dir + "/"))
 
         self.channel = QWebChannel()
         self.channel.registerObject("bridge", self.bridge)
@@ -965,24 +918,28 @@ class MathEditorApp(QMainWindow):
         self.current_lang = lang
         path = os.path.join(self.data_dir, CONFIG_FILE)
         try:
+            config = {}
+            with open(path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+        config["language"] = lang
+        try:
             with open(path, 'w', encoding='utf-8') as f:
-                json.dump({"language": lang}, f, ensure_ascii=False, indent=2)
+                json.dump(config, f, ensure_ascii=False, indent=2)
         except Exception:
             pass
         self._update_window_title()
-        self._rebuild_menus()
+        self._build_menus()
 
     def _update_window_title(self):
         self.setWindowTitle(TRANSLATIONS[self.current_lang]["window_title"])
 
-    def _get_localized_html(self):
-        html = HTML_CONTENT_TEMPLATE
-        html = html.replace("__LANG__", self.current_lang)
-        t = i18n_get(self.current_lang)
-        html = html.replace("__LABEL_EDITOR__", t("label_editor"))
-        html = html.replace("__LABEL_CODE__", t("label_code"))
-        html = html.replace("__INFO_LABEL__", t("info_label"))
-        return html
+    def _switch_language(self, lang):
+        if lang == self.current_lang:
+            return
+        self._save_language(lang)
+        self.web_view.page().runJavaScript(f"setLanguage('{lang}');")
 
     def _build_menus(self):
         menubar = self.menuBar()
@@ -1050,14 +1007,12 @@ class MathEditorApp(QMainWindow):
         view_menu.addAction(self.dark_action)
 
         lang_menu = menubar.addMenu(t["menu_language"])
-
-        lang_zh_action = QAction(t["action_lang_zh"], self)
+        lang_zh_action = QAction("中文", self)
         lang_zh_action.setCheckable(True)
         lang_zh_action.setChecked(self.current_lang == "zh")
         lang_zh_action.triggered.connect(lambda: self._switch_language("zh"))
         lang_menu.addAction(lang_zh_action)
-
-        lang_en_action = QAction(t["action_lang_en"], self)
+        lang_en_action = QAction("English", self)
         lang_en_action.setCheckable(True)
         lang_en_action.setChecked(self.current_lang == "en")
         lang_en_action.triggered.connect(lambda: self._switch_language("en"))
@@ -1077,16 +1032,6 @@ class MathEditorApp(QMainWindow):
         history_menu = menubar.addMenu(t["menu_history"])
         self._history_menu = history_menu
         self._rebuild_history_menu()
-
-    def _rebuild_menus(self):
-        self._build_menus()
-
-    def _switch_language(self, lang):
-        if lang == self.current_lang:
-            return
-        self._save_language(lang)
-        html_content = self._get_localized_html()
-        self.web_view.setHtml(html_content, QUrl.fromLocalFile(self.bundle_dir + "/"))
 
     def _rebuild_fav_menu(self):
         menu = self._fav_menu
@@ -1295,13 +1240,6 @@ class MathEditorApp(QMainWindow):
                 except Exception:
                     pass
                 return
-
-
-def i18n_get(lang):
-    t = TRANSLATIONS.get(lang, TRANSLATIONS["zh"])
-    def getter(key):
-        return t.get(key, TRANSLATIONS["zh"].get(key, key))
-    return getter
 
 
 if __name__ == "__main__":
