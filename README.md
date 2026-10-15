@@ -1,3 +1,9 @@
+<div align="center">
+
+[**简体中文**](README.zh-CN.md) | [**English**](README.en.md)
+
+</div>
+
 # BiDirectional LaTeX Editor
 
 A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWYG visual editing with real-time bidirectional code synchronization.
