@@ -4,7 +4,7 @@
 
 </div>
 
-# BiDirectional LaTeX Editor
+# HaTeX - BiDirectional LaTeX Editor
 
 A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWYG visual editing with real-time bidirectional code synchronization.
 
@@ -44,6 +44,7 @@ A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWY
 - **Syntax Highlighting**: Color-coded LaTeX code (commands, braces, numbers, comments)
 
 ### Advanced
+- **Copy LaTeX**: One-click copy LaTeX code to clipboard (Ctrl+Shift+L)
 - **Copy as Image**: One-click copy formula as PNG to clipboard (Ctrl+Shift+C)
 - **Export**: Export as PNG or SVG/MathML
 - **History**: Auto-save last 50 formulas for quick recall
@@ -51,14 +52,12 @@ A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWY
 - **Drag & Drop**: Open .tex files by dragging into the window
 - **Zoom**: Ctrl+scroll to zoom formula display (12px–72px)
 - **Dark Theme**: Light/dark theme toggle
-- **Multilingual**: Chinese/English interface with language switcher
+- **Multilingual**: Chinese/English interface with language switcher (English default)
 
 ### Editing
 - **Smart Brackets**: Auto-complete bracket pairs
 - **Shortcuts**: Rich keyboard shortcut support
 - **Arrow Key Navigation**: Full arrow key support in formula area (left/right/up/down)
-- **Chinese UI**: Complete Chinese interface and prompts
-- **English UI**: Full English translation available
 
 ## Installation
 
@@ -70,11 +69,11 @@ A desktop LaTeX formula editor built with PySide6 and MathLive, providing WYSIWY
 ### Run from Source
 ```bash
 pip install PySide6
-python "HaTeX _v1.5.2.py"
+python "HaTeX _v1.5.3.py"
 ```
 
 ### Standalone Executable
-Download `HaTeX-v1.5.2-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.2.exe`. No Python installation required.
+Download `HaTeX-v1.5.3-windows-x64.zip` from [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases), extract, and double-click `HaTeX-v1.5.3.exe`. No Python installation required.
 
 ## Usage
 
@@ -88,6 +87,7 @@ Download `HaTeX-v1.5.2-windows-x64.zip` from [Releases](https://github.com/youya
 
 | Shortcut | Action |
 |----------|--------|
+| Ctrl+Shift+L | Copy LaTeX code |
 | Ctrl+Shift+C | Copy as PNG image |
 | Ctrl+Shift+E | Export as PNG |
 | Ctrl+O | Open .tex file |
@@ -117,7 +117,13 @@ Download `HaTeX-v1.5.2-windows-x64.zip` from [Releases](https://github.com/youya
 
 ## Version History
 
-### v1.5.2 (Current)
+### v1.5.3 (Current)
+- **New**: Copy LaTeX code to clipboard (Ctrl+Shift+L)
+- **New**: Copy button on code area label bar
+- **New**: English as default language
+- **Fix**: HTML labels now translate correctly on startup
+
+### v1.5.2
 - **New**: Multilingual support (Chinese/English)
 - **New**: Language switcher in menu (Language → 中文 / English)
 - **New**: Language preference saved to config file
@@ -160,13 +166,13 @@ Download `HaTeX-v1.5.2-windows-x64.zip` from [Releases](https://github.com/youya
 - **Backend**: Python 3.8+ / PySide6 (Qt 6)
 - **Frontend**: HTML5 / CSS3 / JavaScript
 - **Formula Engine**: MathLive 0.111.1
-- **Architecture**: Single-file app (~1000 lines Python + embedded HTML/JS/CSS)
+- **Architecture**: Single-file app (~1300 lines Python + embedded HTML/JS/CSS)
 
 ## Project Structure
 
 ```
 HaTeX/
-├── HaTeX _v1.5.2.py    # Main program (all code)
+├── HaTeX _v1.5.3.py    # Main program (all code)
 ├── mathlive/            # MathLive library files
 │   ├── mathlive.min.js
 │   ├── mathlive-static.css
@@ -179,7 +185,7 @@ HaTeX/
 ## Developer
 
 **Youyang Hu (胡悠飏)**
-University of Science and Technology of China, Class of 2025, Special Class for the Gifted Young
+University of Science and Technology of China, Special Class for the Gifted Young, Class of 2025
 Email: youyanghu@mail.ustc.edu.cn
 
 ## License
@@ -193,4 +199,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Current Version**: v1.5.2 | **Last Updated**: 2026-10-14
+**Current Version**: v1.5.3 | **Last Updated**: 2026-10-15

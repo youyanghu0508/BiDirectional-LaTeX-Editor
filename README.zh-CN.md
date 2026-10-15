@@ -44,6 +44,7 @@
 - **语法高亮**：彩色 LaTeX 代码（命令、花括号、数字、注释）
 
 ### 高级功能
+- **复制 LaTeX**：一键复制 LaTeX 代码到剪贴板（Ctrl+Shift+L）
 - **复制为图片**：一键复制公式为 PNG 到剪贴板（Ctrl+Shift+C）
 - **导出**：导出为 PNG 或 SVG/MathML
 - **历史记录**：自动保存最近 50 个公式，快速调用
@@ -51,7 +52,7 @@
 - **拖放支持**：拖入 .tex 文件即可打开
 - **缩放控制**：Ctrl+滚轮缩放公式显示（12px–72px）
 - **暗色主题**：亮色/暗色主题切换
-- **多语言支持**：中文/英文界面切换
+- **多语言支持**：中文/英文界面切换（默认英文）
 
 ## 安装
 
@@ -63,11 +64,11 @@
 ### 从源码运行
 ```bash
 pip install PySide6
-python "HaTeX _v1.5.2.py"
+python "HaTeX _v1.5.3.py"
 ```
 
 ### 独立可执行文件
-从 [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases) 下载 `HaTeX-v1.5.2-windows-x64.zip`，解压后双击 `HaTeX-v1.5.2.exe` 运行。无需安装 Python。
+从 [Releases](https://github.com/youyanghu0508/BiDirectional-LaTeX-Editor/releases) 下载 `HaTeX-v1.5.3-windows-x64.zip`，解压后双击 `HaTeX-v1.5.3.exe` 运行。无需安装 Python。
 
 ## 使用方法
 
@@ -81,6 +82,7 @@ python "HaTeX _v1.5.2.py"
 
 | 快捷键 | 功能 |
 |--------|------|
+| Ctrl+Shift+L | 复制 LaTeX 代码 |
 | Ctrl+Shift+C | 复制为 PNG 图片 |
 | Ctrl+Shift+E | 导出为 PNG |
 | Ctrl+O | 打开 .tex 文件 |
@@ -94,7 +96,13 @@ python "HaTeX _v1.5.2.py"
 
 ## 版本历史
 
-### v1.5.2（当前版本）
+### v1.5.3（当前版本）
+- **新增**：复制 LaTeX 代码到剪贴板（Ctrl+Shift+L）
+- **新增**：代码区标签栏复制按钮
+- **新增**：默认语言改为英文
+- **修复**：启动时 HTML 标签正确翻译
+
+### v1.5.2
 - **新增**：多语言支持（中文/英文）
 - **新增**：语言切换菜单（语言 → 中文 / English）
 - **新增**：语言偏好保存到配置文件
@@ -120,4 +128,4 @@ python "HaTeX _v1.5.2.py"
 
 ---
 
-**当前版本**：v1.5.2 | **最后更新**：2026-10-15
+**当前版本**：v1.5.3 | **最后更新**：2026-10-15
