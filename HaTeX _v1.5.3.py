@@ -717,12 +717,11 @@ HTML_CONTENT = r"""
 
         document.getElementById('btn-copy-latex').addEventListener('click', function() {
             var latex = latexOutput.value;
-            if (latex) {
-                navigator.clipboard.writeText(latex).then(function() {
-                    var btn = document.getElementById('btn-copy-latex');
-                    btn.textContent = '✅';
-                    setTimeout(function() { btn.textContent = '📋'; }, 1000);
-                });
+            if (latex && window.pythonBridge) {
+                window.pythonBridge.copyToClipboard(latex);
+                var btn = document.getElementById('btn-copy-latex');
+                btn.textContent = '✅';
+                setTimeout(function() { btn.textContent = '📋'; }, 1000);
             }
         });
 
@@ -852,6 +851,7 @@ class Bridge(QObject):
     initRequested = Signal()
     focusStateChanged = Signal(bool)
     languageSaveRequested = Signal(str)
+    clipboardCopyRequested = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -886,6 +886,10 @@ class Bridge(QObject):
     def saveLanguage(self, lang):
         self.languageSaveRequested.emit(lang)
 
+    @Slot(str)
+    def copyToClipboard(self, text):
+        self.clipboardCopyRequested.emit(text)
+
 
 class MathEditorApp(QMainWindow):
     def __init__(self):
@@ -912,6 +916,7 @@ class MathEditorApp(QMainWindow):
         self.bridge.favoritesSaveRequested.connect(self._js_save_favorites)
         self.bridge.focusStateChanged.connect(self._on_mf_focus_changed)
         self.bridge.languageSaveRequested.connect(self._save_language)
+        self.bridge.clipboardCopyRequested.connect(self._js_copy_to_clipboard)
         self._mf_focused = False
 
         self.web_view = QWebEngineView()
@@ -1182,6 +1187,10 @@ class MathEditorApp(QMainWindow):
             if latex:
                 QApplication.clipboard().setText(latex)
         self.web_view.page().runJavaScript("window.getLatexValue()", _copy)
+
+    def _js_copy_to_clipboard(self, text):
+        if text:
+            QApplication.clipboard().setText(text)
 
     def copy_as_image(self):
         pixmap = self.web_view.grab()
