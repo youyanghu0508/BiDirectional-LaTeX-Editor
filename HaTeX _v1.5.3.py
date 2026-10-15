@@ -716,12 +716,40 @@ HTML_CONTENT = r"""
         });
 
         document.getElementById('btn-copy-latex').addEventListener('click', function() {
-            var latex = latexOutput.value;
-            if (latex && window.pythonBridge) {
+            // 优先读取可视化公式的实时值，避免源码框尚未同步时复制到空内容/旧内容。
+            var latex = '';
+            try {
+                if (mf && typeof mf.getValue === 'function') latex = mf.getValue('latex') || '';
+            } catch (e) {}
+            if (!latex && latexOutput) latex = latexOutput.value || '';
+
+            var btn = document.getElementById('btn-copy-latex');
+            if (!latex) {
+                btn.title = '没有可复制的公式';
+                btn.textContent = '⚠️';
+                setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1200);
+                return;
+            }
+
+            // QWebChannel 连接可能尚未完成；仅在桥接对象可用时调用。
+            if (window.pythonBridge && typeof window.pythonBridge.copyToClipboard === 'function') {
                 window.pythonBridge.copyToClipboard(latex);
-                var btn = document.getElementById('btn-copy-latex');
+                btn.title = '已复制 LaTeX 代码';
                 btn.textContent = '✅';
-                setTimeout(function() { btn.textContent = '📋'; }, 1000);
+                setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1000);
+            } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(latex).then(function() {
+                    btn.textContent = '✅';
+                    setTimeout(function() { btn.textContent = '📋'; }, 1000);
+                }).catch(function() {
+                    btn.title = '复制失败，请使用文件菜单中的复制功能';
+                    btn.textContent = '⚠️';
+                    setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1200);
+                });
+            } else {
+                btn.title = '复制服务尚未就绪，请稍后重试';
+                btn.textContent = '⚠️';
+                setTimeout(function() { btn.textContent = '📋'; btn.title = '复制 LaTeX 代码'; }, 1200);
             }
         });
 
