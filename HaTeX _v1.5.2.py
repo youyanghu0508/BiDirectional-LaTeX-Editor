@@ -902,6 +902,8 @@ class MathEditorApp(QMainWindow):
         self._history_timer.timeout.connect(self._auto_save_history)
         self._history_timer.start(5000)
 
+        QTimer.singleShot(500, lambda: self.web_view.page().runJavaScript(f"setLanguage('{self.current_lang}');"))
+
         self._update_window_title()
         print(TRANSLATIONS[self.current_lang]["startup_msg"])
 
