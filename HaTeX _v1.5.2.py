@@ -421,8 +421,7 @@ HTML_CONTENT_TEMPLATE = r"""
             mf.setOptions({
                 smartMode: true,
                 smartFence: true,
-                smartSuperscript: true,
-                locale: currentLang === 'zh' ? 'zh-CN' : 'en'
+                smartSuperscript: true
             });
         }
 
@@ -432,9 +431,6 @@ HTML_CONTENT_TEMPLATE = r"""
             document.getElementById('label-editor').textContent = i18n[lang].label_editor;
             document.getElementById('label-code').textContent = i18n[lang].label_code;
             document.getElementById('info-label').innerHTML = i18n[lang].info_label;
-            if (mf) {
-                mf.setOptions({ locale: lang === 'zh' ? 'zh-CN' : 'en' });
-            }
             if (window.pythonBridge) window.pythonBridge.saveLanguage(lang);
         }
         window.setLanguage = setLanguage;
